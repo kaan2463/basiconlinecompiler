@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Workout</title>
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <script src="ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <style type="text/css" media="screen">
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        .inner {
+            height: 300px;
+            padding-right: 0;
+            padding-left: 0;
+
+        }
+    </style>
+    <link rel="stylesheet" href="bootstrap-4.5.2-dist/css/bootstrap.min.css">
+    <script src="jquery-3.5.1.min.js"></script>
+    <script src="bootstrap-4.5.2-dist/js/bootstrap.min.js"></script>
+
+
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Workout: Is there any posibility to win the challenge?</h1>
+
+        <div class="row">
+            <div class="col-sm-12" id="htmPane">
+                <div class="inner" id="htmEditor"></div>
+            </div>
+
+        </div>
+        <!--/row-->
+        <button id="executeButton" type="button" class="btn btn-dark" onclick="executeCode()">Execute</button>
+        <br><br>
+        <h3>Result:</h3>
+        <div id="resultArea" style="background: honeydew;">
+
+        </div>
+    </div>
+    <!--/container-->
+
+
+
+    <script>
+
+        function sendCode(requestData) {
+
+            var resultArea = document.getElementById("resultArea");
+
+            // send data (method:post)
+            var xhr = new XMLHttpRequest();
+            var url = "http://localhost:9090/evaluate";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //var json = JSON.parse(xhr.responseText);
+                    var resultString = xhr.responseText
+                    resultArea.innerHTML = resultString.replace(/\n/g, "<br />");
+                }
+            };
+            var data = JSON.stringify({ "code": requestData });
+            xhr.send(data);
+        }
+
+        function executeCode() {
+            var htmEditor = ace.edit("htmEditor");
+            sendCode("" + htmEditor.getValue());
+        }
+    </script>
+
+
+    <script>
+
+        var javaBegin =
+            "public class Solution {\n\n" +
+            "   public String solution(int x){\n" +
+            "       // calculate factorial :) \n" +
+            '       return "";\n' +
+            "   }" +
+            "\n}\n";
+
+        ace.require("ace/ext/language_tools");
+
+        var htmEditor = ace.edit("htmEditor");
+        htmEditor.getSession().setMode("ace/mode/javascript");
+        htmEditor.setTheme("ace/theme/monokai");
+        htmEditor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true
+        });
+        htmEditor.setFontSize(23);
+
+        //htmEditor.session.insert(0, javaBegin);//htmEditor.getCursorPosition()
+        htmEditor.setValue(javaBegin);
+        htmEditor.setShowPrintMargin(false);
+        htmEditor.setHighlightActiveLine(false);
+    </script>
+
+
+</body>
+
+</html>
